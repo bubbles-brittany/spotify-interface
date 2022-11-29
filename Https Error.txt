@@ -1,0 +1,62 @@
+HTTPError                                 Traceback (most recent call last)
+File ~\AppData\Local\Programs\Python\Python311\Lib\site-packages\spotipy\client.py:245, in Spotify._internal_call(self, method, url, payload, params)
+    240 response = self._session.request(
+    241     method, url, headers=headers, proxies=self.proxies,
+    242     timeout=self.requests_timeout, **args
+    243 )
+--> 245 response.raise_for_status()
+    246 results = response.json()
+
+File ~\AppData\Local\Programs\Python\Python311\Lib\site-packages\requests\models.py:1021, in Response.raise_for_status(self)
+   1020 if http_error_msg:
+-> 1021     raise HTTPError(http_error_msg, response=self)
+
+HTTPError: 400 Client Error: Bad Request for url: https://api.spotify.com/v1/users/et5bhugzw7qq2psxbdcv0evn9/playlists
+
+During handling of the above exception, another exception occurred:
+
+SpotifyException                          Traceback (most recent call last)
+Cell In [23], line 1
+----> 1 my_playlist = sp.user_playlist_create(user=username, name=categories, public=True,
+      2                                       description="Songs for the bookLover")
+      3 results = sp.user_playlist_add_tracks(username, my_playlist['id'], track_selection_list)
+      4 print(results)
+
+File ~\AppData\Local\Programs\Python\Python311\Lib\site-packages\spotipy\client.py:792, in Spotify.user_playlist_create(self, user, name, public, collaborative, description)
+    776 """ Creates a playlist for a user
+    777 
+    778     Parameters:
+   (...)
+    783         - description - the description of the playlist
+    784 """
+    785 data = {
+    786     "name": name,
+    787     "public": public,
+    788     "collaborative": collaborative,
+    789     "description": description
+    790 }
+--> 792 return self._post("users/%s/playlists" % (user,), payload=data)
+
+File ~\AppData\Local\Programs\Python\Python311\Lib\site-packages\spotipy\client.py:302, in Spotify._post(self, url, args, payload, **kwargs)
+    300 if args:
+    301     kwargs.update(args)
+--> 302 return self._internal_call("POST", url, payload, kwargs)
+
+File ~\AppData\Local\Programs\Python\Python311\Lib\site-packages\spotipy\client.py:267, in Spotify._internal_call(self, method, url, payload, params)
+    260         reason = None
+    262     logger.error(
+    263         'HTTP Error for %s to %s with Params: %s returned %s due to %s',
+    264         method, url, args.get("params"), response.status_code, msg
+    265     )
+--> 267     raise SpotifyException(
+    268         response.status_code,
+    269         -1,
+    270         "%s:\n %s" % (response.url, msg),
+    271         reason=reason,
+    272         headers=response.headers,
+    273     )
+    274 except requests.exceptions.RetryError as retry_error:
+    275     request = retry_error.request
+
+SpotifyException: http status: 400, code:-1 - https://api.spotify.com/v1/users/et5bhugzw7qq2psxbdcv0evn9/playlists:
+ Error parsing JSON., reason: None
